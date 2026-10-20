@@ -47,36 +47,6 @@
     transition: transform 0.2s, background 0.2s;
   }
   a.yt:hover { background: #cc0000; transform: scale(1.05); }
-  details.settings {
-    margin-top: 40px;
-    color: #aaa;
-  }
-  details.settings summary { cursor: pointer; }
-  .settings-box {
-    margin-top: 15px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    align-items: center;
-  }
-  input[type="datetime-local"] {
-    padding: 8px 12px;
-    border-radius: 6px;
-    border: 1px solid #555;
-    background: #222;
-    color: #eee;
-    font-size: 1rem;
-  }
-  button {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 6px;
-    background: #e2c07b;
-    color: #1a1a2e;
-    font-weight: bold;
-    cursor: pointer;
-  }
-  button:hover { background: #f0d49a; }
   #lastGlaze { margin-top: 20px; font-size: 0.9rem; color: #777; }
 </style>
 </head>
@@ -95,62 +65,21 @@
   🎬 Why AC Origins is peak
 </a>
 
-<details class="settings">
-  <summary>⚙️ Change last glaze timestamp (CEST / UTC+2)</summary>
-  <div class="settings-box">
-    <p style="font-size: 0.85rem;">Enter the date & time in CEST. It's stored as UTC internally.</p>
-    <input type="datetime-local" id="glazeInput">
-    <button onclick="saveTimestamp()">Update</button>
-    <button onclick="resetTimestamp()" style="background:#666;color:#eee;">Reset to default</button>
-  </div>
-</details>
-
 <div id="lastGlaze"></div>
 
 <script>
   // Default: 11:42 PM (23:42), October 17, 2026 CEST = 21:42 UTC
   const DEFAULT_UTC = new Date("2026-10-17T21:42:00Z").getTime();
-  const STORAGE_KEY = "hiddenOneGlazeTimestamp";
-
-  function getTimestampUTC() {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved !== null) return parseInt(saved, 10);
-    return DEFAULT_UTC;
-  }
-
-  function saveTimestamp() {
-    const input = document.getElementById("glazeInput").value;
-    if (!input) { alert("Pick a date and time first."); return; }
-    // Interpret input as CEST (UTC+2) and convert to UTC
-    const asUTC = new Date(input + ":00Z").getTime() - 2 * 60 * 60 * 1000;
-    localStorage.setItem(STORAGE_KEY, asUTC);
-    update();
-  }
-
-  function resetTimestamp() {
-    localStorage.removeItem(STORAGE_KEY);
-    loadIntoInput();
-    update();
-  }
-
-  function loadIntoInput() {
-    // Convert stored UTC back to CEST for display in the input
-    const cest = new Date(getTimestampUTC() + 2 * 60 * 60 * 1000);
-    const pad = n => String(n).padStart(2, "0");
-    document.getElementById("glazeInput").value =
-      `${cest.getUTCFullYear()}-${pad(cest.getUTCMonth() + 1)}-${pad(cest.getUTCDate())}T${pad(cest.getUTCHours())}:${pad(cest.getUTCMinutes())}`;
-  }
 
   function update() {
-    const diff = Date.now() - getTimestampUTC();
+    const diff = Date.now() - DEFAULT_UTC;
     const days = Math.max(0, Math.floor(diff / 86400000));
     document.getElementById("days").textContent = days.toLocaleString();
-    const d = new Date(getTimestampUTC());
+    const d = new Date(DEFAULT_UTC);
     document.getElementById("lastGlaze").textContent =
       "Last glaze: " + d.toLocaleString(undefined, { dateStyle: "long", timeStyle: "short" });
   }
 
-  loadIntoInput();
   update();
   setInterval(update, 1000);
 </script>
