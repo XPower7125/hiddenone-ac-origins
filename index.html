@@ -68,14 +68,14 @@
 <div id="lastGlaze"></div>
 
 <script>
-  // Reset: 8:00 PM (20:00), October 20, 2026 GMT+2 = 18:00 UTC
-  const DEFAULT_UTC = new Date("2026-10-20T18:00:00Z").getTime();
+  // Reset: 8:00 PM (20:00), October 20, 2026, in the system's local time zone
+  const RESET_MS = new Date(2026, 9, 20, 20, 0, 0).getTime();
 
   function update() {
-    const diff = Date.now() - DEFAULT_UTC;
+    const diff = Date.now() - RESET_MS;
     const days = Math.max(0, Math.floor(diff / 86400000));
     document.getElementById("days").textContent = days.toLocaleString();
-    const d = new Date(DEFAULT_UTC);
+    const d = new Date(RESET_MS);
     document.getElementById("lastGlaze").textContent =
       "Last glaze: " + d.toLocaleString(undefined, { dateStyle: "long", timeStyle: "short" });
   }
